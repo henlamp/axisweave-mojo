@@ -1,0 +1,9 @@
+[packages.axisweave]
+distribution = "axisweave-mojo"
+reference = "einops"
+license = "MIT"
+license_file = "src/axisweave/LICENSE"
+summary = "Tensor rearrangement, repetition, reductions and borrowed views"
+
+[release]
+packages = ["axisweave"]

@@ -1,0 +1,356 @@
+{
+  "compiler": "1.1.0",
+  "api_version": "0.1",
+  "exports": [
+    "EinsumRecipe",
+    "MixRecipe",
+    "Operation",
+    "PackRecipe",
+    "Reduction",
+    "ReductionValues",
+    "StaticRecipe",
+    "StaticTensorView",
+    "TensorView",
+    "TransformRecipe",
+    "einsum",
+    "einsum_plan",
+    "execute",
+    "execute_into",
+    "mix_plan",
+    "pack",
+    "packing_plan",
+    "parse_shape",
+    "plan",
+    "rearrange",
+    "rearrange_view",
+    "reduce",
+    "reduce_custom",
+    "reduce_custom_into",
+    "repeat",
+    "repeat_view",
+    "unpack",
+    "unpacking_plan",
+    "view"
+  ],
+  "declarations": {
+    "contraction.EinsumRecipe": [
+      "struct EinsumRecipe(Copyable)"
+    ],
+    "contraction.EinsumRecipe.__init__": [
+      "def __init__( out self, var shapes: List[List[Int]], var sizes: List[Int], var strides: List[List[Int]], output_rank: Int, ) raises"
+    ],
+    "contraction.EinsumRecipe.execute": [
+      "def execute[ dtype: DType, // ](self, sources: Span[List[Scalar[dtype]], _]) raises -> List[ Scalar[dtype] ]",
+      "def execute[ dtype: DType, origin: Origin[mut=False], // ](self, sources: ImmSpan[ImmSpan[Scalar[dtype], origin], _]) raises -> List[ Scalar[dtype] ]"
+    ],
+    "contraction.EinsumRecipe.execute_into": [
+      "def execute_into[ dtype: DType, // ]( self, sources: Span[List[Scalar[dtype]], _], destination: Span[mut=True, Scalar[dtype], _], ) raises",
+      "def execute_into[ dtype: DType, origin: Origin[mut=False], // ]( self, sources: ImmSpan[ImmSpan[Scalar[dtype], origin], _], destination: Span[mut=True, Scalar[dtype], _], ) raises"
+    ],
+    "contraction.EinsumRecipe.output_shape": [
+      "def output_shape(self) -> Span[Int, origin_of(self._sizes)]"
+    ],
+    "contraction.einsum": [
+      "def einsum[ dtype: DType, // ]( sources: Span[List[Scalar[dtype]], _], shapes: Span[List[Int], _], pattern: String, ) raises -> List[Scalar[dtype]]",
+      "def einsum[ dtype: DType, origin: Origin[mut=False], // ]( sources: ImmSpan[ImmSpan[Scalar[dtype], origin], _], shapes: Span[List[Int], _], pattern: String, ) raises -> List[Scalar[dtype]]"
+    ],
+    "contraction.einsum_plan": [
+      "def einsum_plan( shapes: Span[List[Int], _], pattern: String ) raises -> EinsumRecipe"
+    ],
+    "custom.ReductionValues": [
+      "struct ReductionValues[ dtype: DType, source: Origin[mut=False], layout: Origin[mut=False], ](ImplicitlyCopyable, Sized)"
+    ],
+    "custom.ReductionValues.__getitem__": [
+      "def __getitem__(self, index: Int) raises -> Scalar[Self.dtype]"
+    ],
+    "custom.ReductionValues.__init__": [
+      "def __init__( out self, values: ImmSpan[Scalar[Self.dtype], Self.source], ref[Self.layout] recipe: TransformRecipe, row: Int, ) raises"
+    ],
+    "custom.ReductionValues.__len__": [
+      "def __len__(self) -> Int"
+    ],
+    "custom.reduce_custom": [
+      "def reduce_custom[ dtype: DType, source: Origin[mut=False], Reducer: def[d: DType, s: Origin[mut=False], p: Origin[mut=False]]( ReductionValues[d, s, p] ) raises -> Scalar[d], //, ]( recipe: TransformRecipe, values: ImmSpan[Scalar[dtype], source], reducer: Reducer, ) raises -> List[Scalar[dtype]]"
+    ],
+    "custom.reduce_custom_into": [
+      "def reduce_custom_into[ dtype: DType, source: Origin[mut=False], Reducer: def[d: DType, s: Origin[mut=False], p: Origin[mut=False]]( ReductionValues[d, s, p] ) raises -> Scalar[d], //, ]( recipe: TransformRecipe, values: ImmSpan[Scalar[dtype], source], destination: Span[mut=True, Scalar[dtype], _], reducer: Reducer, ) raises"
+    ],
+    "gpu.DeviceEinsum": [
+      "struct DeviceEinsum(Copyable)"
+    ],
+    "gpu.DeviceEinsum.__init__": [
+      "def __init__(out self, ctx: DeviceContext, recipe: EinsumRecipe) raises"
+    ],
+    "gpu.DeviceEinsum.execute": [
+      "def execute( self, left: DeviceBuffer[.float32], right: DeviceBuffer[.float32] ) raises -> DeviceBuffer[.float32]"
+    ],
+    "gpu.DeviceEinsum.execute_into": [
+      "def execute_into( self, left: DeviceBuffer[.float32], right: DeviceBuffer[.float32], destination: DeviceBuffer[.float32], ) raises"
+    ],
+    "gpu.DeviceEinsum.output_shape": [
+      "def output_shape(self) -> Span[Int, origin_of(self._recipe._sizes)]"
+    ],
+    "gpu.DeviceTransform": [
+      "struct DeviceTransform(Copyable)"
+    ],
+    "gpu.DeviceTransform.__init__": [
+      "def __init__( out self, ctx: DeviceContext, recipe: TransformRecipe, reduction: Reduction = .sum, ) raises"
+    ],
+    "gpu.DeviceTransform.execute": [
+      "def execute( self, source: DeviceBuffer[.float32] ) raises -> DeviceBuffer[.float32]"
+    ],
+    "gpu.DeviceTransform.execute_into": [
+      "def execute_into( self, source: DeviceBuffer[.float32], destination: DeviceBuffer[.float32], ) raises"
+    ],
+    "gpu.DeviceTransform.output_shape": [
+      "def output_shape( self, ) -> Span[Int, origin_of(self._recipe._data.output_shape)]"
+    ],
+    "kinds.Operation": [
+      "struct Operation(Equatable, ImplicitlyCopyable)"
+    ],
+    "kinds.Operation.rearrange": [
+      "comptime rearrange = Self(0)"
+    ],
+    "kinds.Operation.reduce": [
+      "comptime reduce = Self(2)"
+    ],
+    "kinds.Operation.repeat": [
+      "comptime repeat = Self(1)"
+    ],
+    "kinds.Operation.valid": [
+      "def valid(self) -> Bool"
+    ],
+    "kinds.Reduction": [
+      "struct Reduction(Equatable, ImplicitlyCopyable)"
+    ],
+    "kinds.Reduction.all": [
+      "comptime all = Self(6)"
+    ],
+    "kinds.Reduction.any": [
+      "comptime any = Self(5)"
+    ],
+    "kinds.Reduction.max": [
+      "comptime max = Self(3)"
+    ],
+    "kinds.Reduction.mean": [
+      "comptime mean = Self(1)"
+    ],
+    "kinds.Reduction.min": [
+      "comptime min = Self(2)"
+    ],
+    "kinds.Reduction.prod": [
+      "comptime prod = Self(4)"
+    ],
+    "kinds.Reduction.sum": [
+      "comptime sum = Self(0)"
+    ],
+    "kinds.Reduction.supports": [
+      "def supports[dtype: DType](self) -> Bool"
+    ],
+    "kinds.Reduction.valid": [
+      "def valid(self) -> Bool"
+    ],
+    "mixing.MixRecipe": [
+      "struct MixRecipe(Copyable)"
+    ],
+    "mixing.MixRecipe.__init__": [
+      "def __init__( out self, var contraction: EinsumRecipe, var bias: Optional[TransformRecipe], ) raises"
+    ],
+    "mixing.MixRecipe.execute": [
+      "def execute[ dtype: DType, // ]( self, input: ImmSpan[Scalar[dtype], _], weights: ImmSpan[Scalar[dtype], _], *, bias: ImmSpan[Scalar[dtype], _] = ImmSpan[ Scalar[dtype], ImmStaticOrigin ](), ) raises -> List[Scalar[dtype]]"
+    ],
+    "mixing.MixRecipe.execute_into": [
+      "def execute_into[ dtype: DType, // ]( self, input: ImmSpan[Scalar[dtype], _], weights: ImmSpan[Scalar[dtype], _], destination: Span[mut=True, Scalar[dtype], _], *, bias: ImmSpan[Scalar[dtype], _] = ImmSpan[ Scalar[dtype], ImmStaticOrigin ](), ) raises"
+    ],
+    "mixing.MixRecipe.output_shape": [
+      "def output_shape(self) -> Span[Int, origin_of(self._contraction._sizes)]"
+    ],
+    "mixing.mix_plan": [
+      "def mix_plan( input_shape: ImmSpan[Int, _], weight_shape: ImmSpan[Int, _], pattern: String, ) raises -> MixRecipe",
+      "def mix_plan( input_shape: ImmSpan[Int, _], weight_shape: ImmSpan[Int, _], pattern: String, *, bias_shape: ImmSpan[Int, _], bias_axes: String, ) raises -> MixRecipe"
+    ],
+    "operations.execute": [
+      "def execute( recipe: TransformRecipe, source: ImmSpan[Bool, _], reduction: Reduction = .any, ) raises -> List[Bool]",
+      "def execute[ dtype: DType, // ]( recipe: TransformRecipe, source: ImmSpan[Scalar[dtype], _], reduction: Reduction = .sum, ) raises -> List[Scalar[dtype]]"
+    ],
+    "operations.execute_into": [
+      "def execute_into( recipe: TransformRecipe, source: ImmSpan[Bool, _], destination: Span[mut=True, Bool, _], reduction: Reduction = .any, ) raises",
+      "def execute_into[ dtype: DType, // ]( recipe: TransformRecipe, source: ImmSpan[Scalar[dtype], _], destination: Span[mut=True, Scalar[dtype], _], reduction: Reduction = .sum, ) raises"
+    ],
+    "operations.index": [
+      "def index(row: Int, r: Int) {imm recipe} -> Int"
+    ],
+    "operations.rearrange": [
+      "def rearrange( source: ImmSpan[Bool, _], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Bool]",
+      "def rearrange[ dtype: DType, // ]( source: ImmSpan[Scalar[dtype], _], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Scalar[dtype]]"
+    ],
+    "operations.reduce": [
+      "def reduce( source: ImmSpan[Bool, _], shape: Span[Int, _], pattern: String, reduction: Reduction, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Bool]",
+      "def reduce[ dtype: DType, // ]( source: ImmSpan[Scalar[dtype], _], shape: Span[Int, _], pattern: String, reduction: Reduction, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Scalar[dtype]]",
+      "def reduce[ dtype: DType, origin: Origin[mut=False], Reducer: def[d: DType, s: Origin[mut=False], p: Origin[mut=False]]( ReductionValues[d, s, p] ) raises -> Scalar[d], //, ]( source: ImmSpan[Scalar[dtype], origin], shape: Span[Int, _], pattern: String, *, reducer: Reducer, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Scalar[dtype]]"
+    ],
+    "operations.repeat": [
+      "def repeat( source: ImmSpan[Bool, _], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Bool]",
+      "def repeat[ dtype: DType, // ]( source: ImmSpan[Scalar[dtype], _], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> List[Scalar[dtype]]"
+    ],
+    "packing.PackRecipe": [
+      "struct PackRecipe(Copyable)"
+    ],
+    "packing.PackRecipe.__init__": [
+      "def __init__( out self, var inputs: List[List[Int]], var shape: List[Int], before: Int, after: Int, ) raises"
+    ],
+    "packing.PackRecipe.input_shape": [
+      "def input_shape( self, index: Int ) raises -> Span[Int, origin_of(self._inputs[index])]"
+    ],
+    "packing.PackRecipe.output_shape": [
+      "def output_shape(self) -> Span[Int, origin_of(self._shape)]"
+    ],
+    "packing.PackRecipe.pack": [
+      "def pack[ Element: TrivialRegisterPassable & Defaultable, // ](self, sources: Span[List[Element], _]) raises -> List[Element]",
+      "def pack[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ](self, sources: ImmSpan[ImmSpan[Element, origin], _]) raises -> List[ Element ]"
+    ],
+    "packing.PackRecipe.pack_into": [
+      "def pack_into[ Element: TrivialRegisterPassable & Defaultable, // ]( self, sources: Span[List[Element], _], destination: Span[mut=True, Element, _], ) raises",
+      "def pack_into[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ]( self, sources: ImmSpan[ImmSpan[Element, origin], _], destination: Span[mut=True, Element, _], ) raises"
+    ],
+    "packing.PackRecipe.packed_shapes": [
+      "def packed_shapes(self) raises -> List[List[Int]]"
+    ],
+    "packing.PackRecipe.unpack": [
+      "def unpack[ Element: TrivialRegisterPassable & Defaultable, // ](self, source: ImmSpan[Element, _]) raises -> List[List[Element]]"
+    ],
+    "packing.PackRecipe.unpack_into": [
+      "def unpack_into[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=True], //, ]( self, source: ImmSpan[Element, _], destinations: ImmSpan[Span[mut=True, Element, origin], _], ) raises"
+    ],
+    "packing.PackRecipe.unpack_views": [
+      "def unpack_views[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ](self, source: Span[Element, origin]) raises -> List[ TensorView[Element, origin] ]"
+    ],
+    "packing.pack": [
+      "def pack[ Element: TrivialRegisterPassable & Defaultable, // ]( sources: Span[List[Element], _], shapes: Span[List[Int], _], pattern: String, ) raises -> Tuple[List[Element], PackRecipe]",
+      "def pack[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ]( sources: ImmSpan[ImmSpan[Element, origin], _], shapes: Span[List[Int], _], pattern: String, ) raises -> Tuple[List[Element], PackRecipe]"
+    ],
+    "packing.packing_plan": [
+      "def packing_plan( shapes: Span[List[Int], _], pattern: String ) raises -> PackRecipe"
+    ],
+    "packing.unpack": [
+      "def unpack[ Element: TrivialRegisterPassable & Defaultable, // ](recipe: PackRecipe, source: ImmSpan[Element, _]) raises -> List[ List[Element] ]"
+    ],
+    "packing.unpacking_plan": [
+      "def unpacking_plan( shape: Span[Int, _], packed_shapes: Span[List[Int], _], pattern: String ) raises -> PackRecipe"
+    ],
+    "pattern.TransformRecipe": [
+      "struct TransformRecipe(Copyable)"
+    ],
+    "pattern.TransformRecipe.__init__": [
+      "def __init__(out self)",
+      "def __init__(out self, var data: _RecipeData)"
+    ],
+    "pattern.TransformRecipe.input_shape": [
+      "def input_shape(self) -> Span[Int, origin_of(self._data.input_shape)]"
+    ],
+    "pattern.TransformRecipe.input_size": [
+      "def input_size(self) -> Int"
+    ],
+    "pattern.TransformRecipe.operation": [
+      "def operation(self) -> Operation"
+    ],
+    "pattern.TransformRecipe.output_shape": [
+      "def output_shape(self) -> Span[Int, origin_of(self._data.output_shape)]"
+    ],
+    "pattern.TransformRecipe.output_size": [
+      "def output_size(self) -> Int"
+    ],
+    "pattern.plan": [
+      "def plan( pattern: String, shape: Span[Int, _], operation: Operation = .rearrange, axes_lengths: Dict[String, Int] = Dict[String, Int](), *, strides: List[Int] = List[Int](), offset: Int = 0, ) raises -> TransformRecipe"
+    ],
+    "shapes.parse_shape": [
+      "def parse_shape( shape: Span[Int, _], pattern: String ) raises -> Dict[String, Int]"
+    ],
+    "static.StaticRecipe": [
+      "struct StaticRecipe[ pattern: StringLiteral, *shape: Int, operation: Operation = .rearrange, axes: StringLiteral = \"\", ](ImplicitlyCopyable)"
+    ],
+    "static.StaticRecipe.__init__": [
+      "def __init__(out self)"
+    ],
+    "static.StaticRecipe.execute": [
+      "def execute[ dtype: DType, //, reduction: Reduction = .sum ](self, source: ImmSpan[Scalar[dtype], _]) raises -> List[Scalar[dtype]]",
+      "def execute[ reduction: Reduction = .any ](self, source: ImmSpan[Bool, _]) raises -> List[Bool]"
+    ],
+    "static.StaticRecipe.execute_into": [
+      "def execute_into[ dtype: DType, //, reduction: Reduction = .sum ]( self, source: ImmSpan[Scalar[dtype], _], destination: Span[mut=True, Scalar[dtype], _], ) raises",
+      "def execute_into[ reduction: Reduction = .any ]( self, source: ImmSpan[Bool, _], destination: Span[mut=True, Bool, _] ) raises"
+    ],
+    "static.StaticRecipe.input_size": [
+      "comptime input_size = Self._plan.input_size"
+    ],
+    "static.StaticRecipe.output_rank": [
+      "comptime output_rank = len(Self._plan.output_shape)"
+    ],
+    "static.StaticRecipe.output_shape": [
+      "def output_shape(self) -> Array[Int, Self.output_rank]"
+    ],
+    "static.StaticRecipe.output_size": [
+      "comptime output_size = Self._plan.output_size"
+    ],
+    "static.StaticRecipe.reduction_size": [
+      "comptime reduction_size = Self._plan.reduction_size"
+    ],
+    "static.StaticRecipe.view": [
+      "def view[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ](self, source: Span[Element, origin]) raises -> StaticTensorView[ Self.pattern, *Self.shape, Element=Element, origin=origin, operation=Self.operation, axes=Self.axes, ]"
+    ],
+    "static.StaticTensorView": [
+      "struct StaticTensorView[ pattern: StringLiteral, *dimensions: Int, origin: Origin[mut=False], Element: TrivialRegisterPassable & Defaultable, operation: Operation = .rearrange, axes: StringLiteral = \"\", ](Sized, TrivialRegisterPassable)"
+    ],
+    "static.StaticTensorView.Recipe": [
+      "comptime Recipe = StaticRecipe["
+    ],
+    "static.StaticTensorView.__getitem__": [
+      "def __getitem__(self, index: Int) raises -> Self.Element"
+    ],
+    "static.StaticTensorView.__init__": [
+      "def __init__(out self, source: Span[Self.Element, Self.origin]) raises"
+    ],
+    "static.StaticTensorView.__len__": [
+      "def __len__(self) -> Int"
+    ],
+    "static.StaticTensorView.materialize": [
+      "def materialize(self) raises -> List[Self.Element]"
+    ],
+    "static.StaticTensorView.materialize_into": [
+      "def materialize_into( self, destination: Span[mut=True, Self.Element, _] ) raises"
+    ],
+    "static.StaticTensorView.shape": [
+      "def shape(self) -> Array[Int, Self.Recipe.output_rank]"
+    ],
+    "view.TensorView": [
+      "struct TensorView[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False] ](Copyable, Sized)"
+    ],
+    "view.TensorView.__getitem__": [
+      "def __getitem__(self, index: Int) raises -> Self.Element"
+    ],
+    "view.TensorView.__init__": [
+      "def __init__( out self, source: Span[Self.Element, Self.origin], var recipe: TransformRecipe, ) raises"
+    ],
+    "view.TensorView.__len__": [
+      "def __len__(self) -> Int"
+    ],
+    "view.TensorView.materialize": [
+      "def materialize(self) raises -> List[Self.Element]"
+    ],
+    "view.TensorView.materialize_into": [
+      "def materialize_into( self, destination: Span[mut=True, Self.Element, _] ) raises"
+    ],
+    "view.TensorView.shape": [
+      "def shape(self) -> Span[Int, origin_of(self._recipe._data.output_shape)]"
+    ],
+    "view.rearrange_view": [
+      "def rearrange_view[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ]( source: Span[Element, origin], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> TensorView[Element, origin]"
+    ],
+    "view.repeat_view": [
+      "def repeat_view[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ]( source: Span[Element, origin], shape: Span[Int, _], pattern: String, axes_lengths: Dict[String, Int] = Dict[String, Int](), ) raises -> TensorView[Element, origin]"
+    ],
+    "view.view": [
+      "def view[ Element: TrivialRegisterPassable & Defaultable, origin: Origin[mut=False], //, ]( recipe: TransformRecipe, source: Span[Element, origin], ) raises -> TensorView[ Element, origin ]"
+    ]
+  }
+}
