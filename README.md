@@ -7,15 +7,16 @@ pack/unpack and contract. Borrowed views reorder indexing without copying.
 
 ## Install
 
-Build from source:
+With [Pixi](https://pixi.sh):
 
 ```sh
-git clone https://github.com/henlamp/axisweave-mojo.git
-cd axisweave-mojo
-uv sync --locked
+pixi init my-project
+cd my-project
+pixi workspace channel add https://repo.prefix.dev/modular-community https://conda.modular.com/max
+pixi add axisweave-mojo
 ```
 
-Save as `example.mojo`, then run `uv run mojo run -I src example.mojo`:
+Save as `example.mojo`, then run `pixi run mojo run example.mojo`:
 
 ```mojo
 from std.collections import ImmSpan, List
