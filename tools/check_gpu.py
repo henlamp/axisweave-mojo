@@ -177,7 +177,7 @@ def main():
     include = args.package_dir or ROOT / "src"
     compiler = run([MOJO, "--version"], "gpu-version")
     nvidia = {}
-    for arch in ("sm_80", "sm_90", "sm_120"):
+    for arch in ("sm_80", "sm_86", "sm_90", "sm_120"):
         output = BUILD / f"gpu-{arch}.s"
         run(
             [
@@ -253,6 +253,15 @@ def main():
             and f"API: {args.require_api}" not in output.splitlines()[0]
         ):
             raise RuntimeError("The requested GPU backend was not executed")
+        if "API: cuda" in output.splitlines()[0]:
+            report["cuda_devices"] = run(
+                [
+                    "nvidia-smi",
+                    "--query-gpu=name,driver_version,compute_cap",
+                    "--format=csv,noheader",
+                ],
+                "gpu-cuda-device",
+            ).splitlines()
         report.update(
             {
                 "hardware_execution": True,

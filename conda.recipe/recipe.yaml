@@ -1,15 +1,15 @@
 {
   "package": {
     "name": "axisweave-mojo",
-    "version": "0.1.0"
+    "version": "0.2.0"
   },
   "source": {
     "path": ".."
   },
   "build": {
-    "number": 3,
-    "string": "mojo110_3",
-    "skip": "not (osx and arm64)",
+    "number": 0,
+    "string": "mojo110_0",
+    "skip": "not ((osx and arm64) or (linux and x86_64))",
     "files": [
       "lib/mojo/axisweave.mojoc"
     ],
