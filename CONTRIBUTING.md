@@ -1,5 +1,9 @@
 # Contributing
 
+Develop on `development` and merge completed, tested changes into `main` through
+focused pull requests. Publish new releases from `main`; keep published tags and
+release artifacts unchanged.
+
 Run `uv sync --locked` and `uv run python tools/check_all.py`.
 Native checks live in `tests/*.mojo`; Python generates independent NumPy/einops fixtures.
 Behavior changes need an independent reference or a regression test.
