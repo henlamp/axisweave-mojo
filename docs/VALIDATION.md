@@ -17,8 +17,12 @@ NVIDIA sm_80/sm_86/sm_90/sm_120 and records that no GPU executed. Normal CI uses
 The manual GPU workflow requires a registered `metal` or `cuda` self-hosted runner.
 
 The [0.2 Metal check](evidence/020-metal.json) passed 399 transforms, 66 contractions,
-220 rejected inputs and a 256-output sensor pipeline. CUDA hardware acceptance is pending.
+220 rejected inputs and a 256-output sensor pipeline. The [RTX 3070 check](evidence/020-cuda.json)
+passes the same cases using the native Linux Conda module. It used one CPU core at
+low priority, held the workstation's existing resource lock and ran no benchmarks.
 
 `tests/gpu-verification.json` records current input hashes and hardware identity;
 `tests/gpu-benchmark.json` separates warmed GPU execution from transfers and CPU
-execution. Timings have no pass threshold and imply no general speedup.
+execution. Timings require `--benchmark`, have no pass threshold and imply no general speedup.
+Use `--arch sm_86 --compiler-threads 1` for focused checks. Shared hosts still need
+their own resource reservation and limits.

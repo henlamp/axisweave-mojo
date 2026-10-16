@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import platform
+import re
 import statistics
 import subprocess
 import warnings
@@ -167,22 +168,37 @@ def contraction_cases():
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--compile-only", action="store_true")
+    parser.add_argument(
+        "--benchmark", action="store_true", help="Opt in to timed GPU workloads"
+    )
+    parser.add_argument(
+        "--arch", action="append", help="NVIDIA codegen target; repeat as needed"
+    )
+    parser.add_argument("--compiler-threads", type=int, default=1)
     parser.add_argument("--require-api", choices=("metal", "cuda"))
     parser.add_argument("--package-dir", help="Use installed/precompiled modules")
     args = parser.parse_args()
     if args.compile_only and args.require_api:
         parser.error("--require-api needs hardware execution")
+    if args.compiler_threads < 1:
+        parser.error("--compiler-threads must be positive")
+    if args.compile_only and args.benchmark:
+        parser.error("--benchmark needs hardware execution")
+    if any(not re.fullmatch(r"sm_[0-9]+", arch) for arch in args.arch or []):
+        parser.error("--arch must be an NVIDIA target such as sm_86")
+    compiler_flags = ["--num-threads", str(args.compiler_threads)]
     verified = verification_manifest()
     FIXTURES.mkdir(parents=True, exist_ok=True)
     include = args.package_dir or ROOT / "src"
     compiler = run([MOJO, "--version"], "gpu-version")
     nvidia = {}
-    for arch in ("sm_80", "sm_86", "sm_90", "sm_120"):
+    for arch in dict.fromkeys(args.arch or ("sm_80", "sm_86", "sm_90", "sm_120")):
         output = BUILD / f"gpu-{arch}.s"
         run(
             [
                 MOJO,
                 "build",
+                *compiler_flags,
                 "--Werror",
                 "--emit",
                 "asm",
@@ -219,6 +235,8 @@ def main():
         "numpy": np.__version__,
         "einops": einops.__version__,
         "hardware_execution": False,
+        "compiler_threads": args.compiler_threads,
+        "benchmark_requested": args.benchmark,
     }
     if not args.compile_only:
         cases = transform_cases()
@@ -232,6 +250,7 @@ def main():
             [
                 MOJO,
                 "build",
+                *compiler_flags,
                 "--Werror",
                 "-I",
                 include,
@@ -279,6 +298,7 @@ def main():
             [
                 MOJO,
                 "run",
+                *compiler_flags,
                 "--Werror",
                 "-I",
                 include,
@@ -315,6 +335,7 @@ def main():
                     [
                         MOJO,
                         "run",
+                        *compiler_flags,
                         "--Werror",
                         "-I",
                         include,
@@ -327,12 +348,13 @@ def main():
                 ),
                 flush=True,
             )
-    if not args.compile_only:
+    if not args.compile_only and args.benchmark:
         timings = json.loads(
             run(
                 [
                     MOJO,
                     "run",
+                    *compiler_flags,
                     "--Werror",
                     "-I",
                     include,
@@ -365,6 +387,7 @@ def main():
         [
             str(MOJO),
             "build",
+            *compiler_flags,
             "--Werror",
             "-I",
             str(include),
@@ -393,6 +416,7 @@ def main():
         [
             str(MOJO),
             "build",
+            *compiler_flags,
             "--Werror",
             "-I",
             str(include),

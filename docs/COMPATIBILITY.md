@@ -49,8 +49,9 @@ before host access. Input storage must stay unchanged until queued work complete
 Exact output lengths and source/output overlap, including sub-buffers, are checked
 before writes. Output grids must fit 2^31-1 blocks of 128 threads. A driver or kernel failure can leave output incomplete.
 
-Apple M4 Pro Float32 has CPU/NumPy parity checks. NVIDIA sm_80/sm_86/sm_90/sm_120 has PTX
-compilation checks; numerical execution and performance there remain unverified.
+Apple M4 Pro and NVIDIA RTX 3070 (sm_86) Float32 have CPU/NumPy parity checks.
+NVIDIA sm_80/sm_90/sm_120 have compilation checks; execution there remains unverified.
+The RTX 3070 acceptance is a correctness check, not a performance benchmark.
 Floating-point reductions/contractions can differ by rounding between backends;
 NaN and signed-zero rules match the CPU contract. Kernels parallelize output rows;
 large reductions and matrix multiplication are not tuned vendor implementations.

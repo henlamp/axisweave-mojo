@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "hardware_execution": true,
+  "device": {
+    "name": "NVIDIA GeForce RTX 3070",
+    "driver": "610.60",
+    "compute_capability": "8.6"
+  },
+  "mojo": "Mojo 1.1.0 (8189361e)",
+  "max_core": "26.6.0",
+  "source_commit": "533dac98ea4baf2267332d309c07c4973c73061b",
+  "source_sha256": "f98e68c8104f43abda787d07676d98581a83a1a4665ac06a8aa8bb60a641f83c",
+  "package_source_commit": "fdf4688c4f0823c65765f61529524e031fc8c612",
+  "linux_package_sha256": "5a27dc95e80df99923be822a17eb3be059aade1a1430ff6ed0fb238870629168",
+  "compiled_module_sha256": "157a14d1bdf66efe712e67d9a687909d7490183804c0034f5a24d5c5cc1b07e8",
+  "valid_transforms": 399,
+  "rejected_inputs": 220,
+  "contractions": 66,
+  "sensor_outputs": 256,
+  "sensor_maximum_absolute_error": 6.249999989771382e-09,
+  "contracts": [
+    "extents",
+    "contexts",
+    "overlapping and disjoint aliases",
+    "queued lifetimes",
+    "NaN/Inf/signed zero",
+    "Float64 CPU precision"
+  ],
+  "fixtures_sha256": {
+    "fixtures/gpu-contractions.txt": "5cd399e3aab811def99b1db2c7846846ae2ccd80815beb3dc7d60c4bdf2292ff",
+    "fixtures/gpu-transforms.txt": "effdde053ed41837ea57691bd342a3745fc63b7e10c28857ef5d607e42e6aba5",
+    "fixtures/sensor-reference.json": "db124de31e83f2974aa872c4182946d42bbe3e438ff8c70e29eb89b33470933b"
+  },
+  "limits": {
+    "cpu_cores": 1,
+    "nice": 15,
+    "timeout_seconds": 180,
+    "elapsed_seconds": 40.799020767211914,
+    "sampled_peak_process_rss_bytes": 1553227776,
+    "resource_guard": "passed",
+    "benchmarks": false
+  },
+  "preflight": {
+    "gpu_free_mib": 7921,
+    "gpu_utilization_percent": 0
+  },
+  "reference_libraries": {
+    "numpy": "2.5.3",
+    "einops": "0.8.2"
+  }
+}

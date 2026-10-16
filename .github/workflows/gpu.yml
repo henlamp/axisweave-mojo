@@ -8,6 +8,10 @@ on:
         required: true
         type: choice
         options: [metal, cuda]
+      benchmark:
+        description: Also run timed GPU workloads
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -27,7 +31,20 @@ jobs:
       - run: uv run python tools/build_packages.py
       - env:
           GPU_BACKEND: ${{ inputs.backend }}
-        run: uv run python tools/check_gpu.py --require-api "$GPU_BACKEND" --package-dir .build/packages
+          GPU_BENCHMARK: ${{ inputs.benchmark }}
+        shell: bash
+        run: |
+          args=(--require-api "$GPU_BACKEND" --package-dir .build/packages --compiler-threads 1)
+          if [[ "$GPU_BACKEND" == cuda ]]; then
+            cap=$(nvidia-smi --id=0 --query-gpu=compute_cap --format=csv,noheader)
+            args+=(--arch "sm_${cap//[[:space:].]/}")
+          else
+            args+=(--arch sm_86)
+          fi
+          if [[ "$GPU_BENCHMARK" == true ]]; then
+            args+=(--benchmark)
+          fi
+          uv run python tools/check_gpu.py "${args[@]}"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         if: always()
         with:
