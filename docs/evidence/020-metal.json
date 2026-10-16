@@ -1,0 +1,66 @@
+{
+  "mojo": "Mojo 1.1.0 (8189361e)",
+  "platform": "macOS-27.0.1-arm64-arm-64bit",
+  "source_sha256": "f98e68c8104f43abda787d07676d98581a83a1a4665ac06a8aa8bb60a641f83c",
+  "nvidia": {
+    "sm_80": {
+      "ptx_kernels": 14,
+      "status": "compiled",
+      "hardware_execution": false,
+      "assembly_sha256": "8ca8561909ad9c6d7e122439db3adb7888b2ee682b5a9efdad8bff3db94b7012"
+    },
+    "sm_86": {
+      "ptx_kernels": 14,
+      "status": "compiled",
+      "hardware_execution": false,
+      "assembly_sha256": "f1fd144a9db8f098c68fb280adda5139f2ca2c6d43fc2e64b8c59dc83b63e36e"
+    },
+    "sm_90": {
+      "ptx_kernels": 14,
+      "status": "compiled",
+      "hardware_execution": false,
+      "assembly_sha256": "f563fcf088f2567c0456c71f23ae729eff3c4413ee1adb912821d03e1c479b69"
+    },
+    "sm_120": {
+      "ptx_kernels": 14,
+      "status": "compiled",
+      "hardware_execution": false,
+      "assembly_sha256": "78d4857518df058c0e8f6f4534555ddaf9dd57e1ea062ea0d70e8e32e220c8fa"
+    }
+  },
+  "numpy": "2.5.3",
+  "einops": "0.8.2",
+  "hardware_execution": true,
+  "device": "DEVICE: Apple M4 Pro API: metal",
+  "valid_transforms": 399,
+  "rejections": 220,
+  "contractions": 66,
+  "fixtures_sha256": {
+    "gpu-transforms.txt": "effdde053ed41837ea57691bd342a3745fc63b7e10c28857ef5d607e42e6aba5",
+    "gpu-contractions.txt": "5cd399e3aab811def99b1db2c7846846ae2ccd80815beb3dc7d60c4bdf2292ff"
+  },
+  "sensor_pipeline": {
+    "status": "passed",
+    "numpy_outputs": 256,
+    "device_stages": 3
+  },
+  "float64_device_input": "rejected by type checker",
+  "shape_lifetime": "rejected by type checker",
+  "compiled_module_sha256": "5af4d8c680714a66ef26f330f8185724db333ce2a55826c35a8e597244b2abc9",
+  "status": "passed",
+  "tested_commit": "fdf4688c4f0823c65765f61529524e031fc8c612",
+  "benchmark": {
+    "shape": [
+      512,
+      768
+    ],
+    "iterations": 20,
+    "trials": 5,
+    "allocation_and_compilation_timed": false,
+    "median_seconds": {
+      "cpu_seconds": 0.00028539999620988963,
+      "gpu_resident_seconds": 0.00012410000199452041,
+      "gpu_with_transfers_seconds": 0.00019845000351779163
+    }
+  }
+}

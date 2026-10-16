@@ -3,7 +3,7 @@
 ## 0.2.0 (unreleased)
 
 Linux x86-64 Conda packages, native installed-consumer checks and platform-bound
-artifact verification. CUDA validation includes the RTX 3070's sm_86 target.
+artifact verification. PTX checks include sm_86; CUDA hardware acceptance is pending.
 
 ## 0.1.0
 

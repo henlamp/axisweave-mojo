@@ -30,8 +30,9 @@ def main() raises:
     print(transposed.materialize())  # [0, 3, 1, 4, 2, 5]
 ```
 
-Version 0.1.0 packages use Mojo 1.1.0 on macOS ARM64. Source checks also cover
-1.2.0.dev2026100905; Linux is experimental. CPU operations retain Float32/Float64.
+Published 0.1.0 packages use Mojo 1.1.0 on macOS ARM64. Development 0.2.0 adds
+Linux x86-64 packages and fresh installed-consumer checks. Source checks also
+cover 1.2.0.dev2026100905. CPU operations retain Float32/Float64.
 `axisweave.gpu` adds explicit Float32 device-buffer transforms, reductions and binary
 contractions using MAX Core 26.6.0. Apple Metal is hardware-tested; NVIDIA is
 cross-compiled and awaits hardware testing. Float64 stays on the CPU on Apple.

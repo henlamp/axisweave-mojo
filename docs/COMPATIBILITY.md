@@ -1,7 +1,7 @@
 # Compatibility
 
 The source API targets Axisweave on Mojo 1.1.0, macOS ARM64
-and experimental Linux x86-64. The compiler version is an exact dependency. A `.mojoc`
+and Linux x86-64. The compiler version is an exact dependency. A `.mojoc`
 artifact belongs to the compiler that built it; another compiler needs a rebuild
 and its own acceptance run.
 
@@ -49,7 +49,7 @@ before host access. Input storage must stay unchanged until queued work complete
 Exact output lengths and source/output overlap, including sub-buffers, are checked
 before writes. Output grids must fit 2^31-1 blocks of 128 threads. A driver or kernel failure can leave output incomplete.
 
-Apple M4 Pro Float32 has CPU/NumPy parity checks. NVIDIA sm_80/sm_90/sm_120 has PTX
+Apple M4 Pro Float32 has CPU/NumPy parity checks. NVIDIA sm_80/sm_86/sm_90/sm_120 has PTX
 compilation checks; numerical execution and performance there remain unverified.
 Floating-point reductions/contractions can differ by rounding between backends;
 NaN and signed-zero rules match the CPU contract. Kernels parallelize output rows;
